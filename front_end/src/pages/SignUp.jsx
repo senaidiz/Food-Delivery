@@ -1,3 +1,4 @@
+import { API_URL } from "../config";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/signup.css";
@@ -28,7 +29,7 @@ function SignUp() {
       return;
     }
 
-    const res = await fetch("http://localhost:4000/auth/register", {
+    const res = await fetch(`${API_URL}/auth/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form),
@@ -47,7 +48,7 @@ function SignUp() {
   async function handleLogin(e) {
     e.preventDefault();
 
-    const res = await fetch("http://localhost:4000/auth/login", {
+    const res = await fetch(`${API_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

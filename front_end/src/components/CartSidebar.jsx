@@ -1,3 +1,4 @@
+import { API_URL } from "../config";
 import { useEffect, useState } from "react";
 import PaymentProcessor from "../components/PaymentProcessor";
 import "../styles/CartSidebar.css";
@@ -23,7 +24,7 @@ export default function CartSidebar({ isOpen, onClose }) {
 
     try {
       //load cart
-      const cartRes = await fetch("http://localhost:4000/cart", {
+      const cartRes = await fetch(`${API_URL}/cart`, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -45,7 +46,7 @@ export default function CartSidebar({ isOpen, onClose }) {
       }
 
       //load user info to get address
-      const userRes = await fetch("http://localhost:4000/auth/user", {
+      const userRes = await fetch(`${API_URL}/auth/user`, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -70,7 +71,7 @@ export default function CartSidebar({ isOpen, onClose }) {
     const token = localStorage.getItem("token");
 
     try {
-      await fetch(`http://localhost:4000/cart/${cartItemId}`, {
+      await fetch(`${API_URL}/cart/${cartItemId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -98,7 +99,7 @@ export default function CartSidebar({ isOpen, onClose }) {
     const token = localStorage.getItem("token");
 
     try {
-      const res = await fetch(`http://localhost:4000/promotions/apply`, {
+      const res = await fetch(`${API_URL}/promotions/apply`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -136,7 +137,7 @@ export default function CartSidebar({ isOpen, onClose }) {
     const token = localStorage.getItem("token");
 
     try {
-      await fetch(`http://localhost:4000/cart/${cartItemId}/quantity`, {
+      await fetch(`${API_URL}/cart/${cartItemId}/quantity`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -217,7 +218,7 @@ export default function CartSidebar({ isOpen, onClose }) {
         promo_code: appliedPromotion?.code || null
       };
 
-      const res = await fetch("http://localhost:4000/orders/from-cart", {
+      const res = await fetch(`${API_URL}/orders/from-cart`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -294,7 +295,7 @@ export default function CartSidebar({ isOpen, onClose }) {
     };
 
     const res = await fetch(
-      "http://localhost:4000/orders/from-cart",
+      `${API_URL}/orders/from-cart`,
       {
         method: "POST",
         headers: {
@@ -338,7 +339,7 @@ export default function CartSidebar({ isOpen, onClose }) {
 
     try {
       //get user info
-      const userRes = await fetch("http://localhost:4000/auth/user", {
+      const userRes = await fetch(`${API_URL}/auth/user`, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -346,7 +347,7 @@ export default function CartSidebar({ isOpen, onClose }) {
         const userData = await userRes.json();
 
         //get user's credit cards
-        const cardsRes = await fetch(`http://localhost:4000/credit-cards/${userData.user_id}`, {
+        const cardsRes = await fetch(`${API_URL}/credit-cards`, {
           headers: { Authorization: `Bearer ${token}` }
         });
 

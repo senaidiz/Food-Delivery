@@ -1,3 +1,4 @@
+import { API_URL } from "../config";
 import { useEffect, useState } from "react";
 
 export default function OrderCard({ order, token }) {
@@ -10,7 +11,7 @@ export default function OrderCard({ order, token }) {
     async function loadOrderItems() {
         if (items.length > 0) return;
 
-        const res = await fetch(`http://localhost:4000/orders/${order.order_id}`, {
+        const res = await fetch(`${API_URL}/orders/${order.order_id}`, {
             headers: { Authorization: `Bearer ${token}` },
         });
 

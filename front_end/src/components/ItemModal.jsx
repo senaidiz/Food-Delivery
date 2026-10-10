@@ -1,3 +1,4 @@
+import { API_URL } from "../config";
 import { useEffect, useState } from "react";
 import "../styles/ItemModal.css";
 
@@ -9,7 +10,7 @@ export default function ItemModal({ itemId, onClose, onAdd }) {
   //load item info from backend
   useEffect(() => {
     async function loadItem() {
-      const res = await fetch(`http://localhost:4000/menu/item/${itemId}`);
+      const res = await fetch(`${API_URL}/menu/item/${itemId}`);
       const data = await res.json();
       setItem(data);
     }

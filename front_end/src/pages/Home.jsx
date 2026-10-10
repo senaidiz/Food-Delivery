@@ -1,3 +1,4 @@
+import { API_URL } from "../config";
 import { useState, useEffect } from "react";
 import CategorySlider from "../components/CategorySlider";
 import RestaurantCard from "../components/RestaurantCard";
@@ -15,7 +16,7 @@ export default function Home() {
   useEffect(() => {
     async function fetchRestaurants() {
       try {
-        const res = await fetch("http://localhost:4000/restaurants");
+        const res = await fetch(`${API_URL}/restaurants`);
         const data = await res.json();
         setRestaurants(data);
       } catch (err) {
@@ -31,7 +32,7 @@ export default function Home() {
   useEffect(() => {
     async function fetchTags() {
       try {
-        const res = await fetch("http://localhost:4000/tags");
+        const res = await fetch(`${API_URL}/tags`);
         const data = await res.json();
 
         const uniqueTags = [];

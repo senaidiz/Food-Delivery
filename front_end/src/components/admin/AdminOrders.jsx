@@ -1,3 +1,4 @@
+import { API_URL } from "../../config";
 import React, { useEffect, useState } from "react";
 import OrderStatusDropdown from "./OrderStatusDropdown";
 import "../../styles/AdminOrders.css";
@@ -10,7 +11,7 @@ function AdminOrders({}) {
   useEffect(() => {
     async function fetchOrders() {
       try{
-        const result = await fetch("http://localhost:4000/orders/");
+        const result = await fetch(`${API_URL}/orders/`);
         const data = await result.json();
         setOrders(data);
       }catch(err){
@@ -26,7 +27,7 @@ function AdminOrders({}) {
   //update order status to backend
   const updateStatus = async (orderId, newStatus) => {
     try {
-      await fetch(`http://localhost:4000/orders/${orderId}/status`, {
+      await fetch(`${API_URL}/orders/${orderId}/status`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

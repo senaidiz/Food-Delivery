@@ -1,3 +1,4 @@
+import { API_URL } from "../config";
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import "../styles/RestaurantPage.css";
@@ -37,7 +38,7 @@ export default function RestaurantPage() {
         selectedOptions
       });
 
-      const response = await fetch("http://localhost:4000/cart/add", {
+      const response = await fetch(`${API_URL}/cart/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -69,7 +70,7 @@ export default function RestaurantPage() {
   useEffect(() => {
     async function fetchRestaurant() {
       try {
-        const res = await fetch(`http://localhost:4000/restaurants/${id}`);
+        const res = await fetch(`${API_URL}/restaurants/${id}`);
         const data = await res.json();
         setRestaurant(data);
       } catch (error) {
@@ -84,7 +85,7 @@ export default function RestaurantPage() {
   useEffect(() => {
     async function fetchMenu() {
       try {
-        const res = await fetch(`http://localhost:4000/menu/restaurant/${id}`);
+        const res = await fetch(`${API_URL}/menu/restaurant/${id}`);
         const data = await res.json();
 
         setMenuItems(Array.isArray(data) ? data : []);

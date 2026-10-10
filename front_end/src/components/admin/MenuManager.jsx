@@ -1,3 +1,4 @@
+import { API_URL } from "../../config";
 import React, { useState, useEffect } from "react";
 import "../../styles/MenuManager.css";
 
@@ -34,7 +35,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
 
   const fetchMenuItems = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/auth/admin/restaurant/${restaurant.restaurant_id}`);
+      const response = await fetch(`${API_URL}/auth/admin/restaurant/${restaurant.restaurant_id}`);
       const data = await response.json();
       setMenuItems(data);
       setLoading(false);
@@ -46,7 +47,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/menu/categories/${restaurant.restaurant_id}`);
+      const response = await fetch(`${API_URL}/menu/categories/${restaurant.restaurant_id}`);
       const data = await response.json();
       setCategories(data);
     } catch (error) {
@@ -56,7 +57,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
 
   const fetchTags = async () => {
     try {
-      const response = await fetch("http://localhost:4000/menu/tags");
+      const response = await fetch(`${API_URL}/menu/tags`);
       const data = await response.json();
       setTags(data);
     } catch (error) {
@@ -73,7 +74,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
     }
 
     try {
-      const response = await fetch("http://localhost:4000/menu/categories", {
+      const response = await fetch(`${API_URL}/menu/categories`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -105,7 +106,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
     }
 
     try {
-      const response = await fetch(`http://localhost:4000/menu/categories/${editingCategory.category_id}`, {
+      const response = await fetch(`${API_URL}/menu/categories/${editingCategory.category_id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -132,7 +133,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
     if (!window.confirm("Are you sure you want to delete this category? Items in this category will become uncategorized.")) return;
 
     try {
-      const response = await fetch(`http://localhost:4000/menu/categories/${categoryId}`, {
+      const response = await fetch(`${API_URL}/menu/categories/${categoryId}`, {
         method: "DELETE",
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("adminToken")}`
@@ -155,7 +156,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:4000/menu/item", {
+      const response = await fetch(`${API_URL}/menu/item`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -197,7 +198,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
     e.preventDefault();
 
     try {
-      const response = await fetch(`http://localhost:4000/menu/item/${editingItem.item_id}`, {
+      const response = await fetch(`${API_URL}/menu/item/${editingItem.item_id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -228,7 +229,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
     if (!window.confirm("Are you sure you want to delete this item?")) return;
 
     try {
-      const response = await fetch(`http://localhost:4000/menu/item/${itemId}`, {
+      const response = await fetch(`${API_URL}/menu/item/${itemId}`, {
         method: "DELETE",
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("adminToken")}`
@@ -249,7 +250,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
   // TOGGLE ITEM AVAILABILITY 
   const toggleAvailability = async (item) => {
     try {
-      const response = await fetch(`http://localhost:4000/menu/item/${item.item_id}`, {
+      const response = await fetch(`${API_URL}/menu/item/${item.item_id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -300,7 +301,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
   // GET ITEM OPTIONS : from backend
   const fetchItemOptions = async (itemId) => {
     try {
-      const response = await fetch(`http://localhost:4000/menu/item/${itemId}/options`);
+      const response = await fetch(`${API_URL}/menu/item/${itemId}/options`);
       const data = await response.json();
       return data;
     } catch (error) {
@@ -329,7 +330,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
 
     try {
       const response = await fetch(
-        `http://localhost:4000/menu/item/${editingOptions.item_id}/options`,
+        `${API_URL}/menu/item/${editingOptions.item_id}/options`,
         {
           method: "POST",
           headers: {
@@ -368,7 +369,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
 
     try {
       const response = await fetch(
-        `http://localhost:4000/menu/options/${optionId}`,
+        `${API_URL}/menu/options/${optionId}`,
         {
           method: "DELETE",
           headers: {
@@ -401,7 +402,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
 
     try {
       const response = await fetch(
-        `http://localhost:4000/menu/options/${option.option_id}`,
+        `${API_URL}/menu/options/${option.option_id}`,
         {
           method: "PUT",
           headers: {

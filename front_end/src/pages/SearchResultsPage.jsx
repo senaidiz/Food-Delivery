@@ -1,3 +1,4 @@
+import { API_URL } from "../config";
 import { useSearchParams, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Header from "../components/Header";
@@ -28,7 +29,7 @@ export default function SearchResultsPage() {
       try {
         setLoading(true);
         const res = await fetch(
-          `http://localhost:4000/restaurants/search?query=${encodeURIComponent(query)}`
+          `${API_URL}/restaurants/search?query=${encodeURIComponent(query)}`
         );
         
         if (!res.ok) {

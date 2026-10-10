@@ -1,3 +1,4 @@
+import { API_URL } from "../../config";
 import React, { useState, useEffect } from "react";
 import "../../styles/PromoManager.css";
 
@@ -19,7 +20,7 @@ function PromoManager({ restaurant, close }) {
 
   const fetchPromotions = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/promotions/restaurant/${restaurant.restaurant_id}`);
+      const response = await fetch(`${API_URL}/promotions/restaurant/${restaurant.restaurant_id}`);
       const data = await response.json();
       setPromotions(data);
       setLoading(false);
@@ -34,7 +35,7 @@ function PromoManager({ restaurant, close }) {
     e.preventDefault();
     
     try {
-      const response = await fetch("http://localhost:4000/promotions", {
+      const response = await fetch(`${API_URL}/promotions`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -74,7 +75,7 @@ function PromoManager({ restaurant, close }) {
     if (!window.confirm("Are you sure you want to deactivate this promotion?")) return;
 
     try {
-      const response = await fetch(`http://localhost:4000/promotions/${promoId}`, {
+      const response = await fetch(`${API_URL}/promotions/${promoId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

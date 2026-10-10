@@ -1,3 +1,4 @@
+import { API_URL } from "../../config";
 import React, { useState, useEffect } from "react";
 import "../../styles/AdminUsers.css";
 
@@ -22,7 +23,7 @@ function AdminUsers() {
 
   const fetchUsers = async () => {
     try {
-      const res = await fetch("http://localhost:4000/auth/admin/users");
+      const res = await fetch(`${API_URL}/auth/admin/users`);
       const data = await res.json();
       setUsers(data);
       setFilteredUsers(data);
@@ -55,7 +56,7 @@ function AdminUsers() {
     if (!confirmDelete) return;
 
     try {
-      const res = await fetch(`http://localhost:4000/auth/admin/users/${id}`, {
+      const res = await fetch(`${API_URL}/auth/admin/users/${id}`, {
         method: "DELETE",
       });
 
@@ -89,7 +90,7 @@ function AdminUsers() {
     if (!confirmReactivate) return;
 
     try {
-      const res = await fetch(`http://localhost:4000/auth/admin/users/${id}/reactivate`, {
+      const res = await fetch(`${API_URL}/auth/admin/users/${id}/reactivate`, {
         method: "PATCH",
       });
 
@@ -126,7 +127,7 @@ function AdminUsers() {
         role: newUser.role || "customer", 
       };
 
-      const res = await fetch("http://localhost:4000/auth/admin/users", {
+      const res = await fetch(`${API_URL}/auth/admin/users`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(userData),

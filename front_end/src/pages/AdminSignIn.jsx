@@ -1,3 +1,4 @@
+import { API_URL } from "../config";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/signup.css";
@@ -15,7 +16,7 @@ export default function AdminSignIn() {
   async function handleLogin(e) {
     e.preventDefault();
 
-    const res = await fetch("http://localhost:4000/auth/admin/login", {
+    const res = await fetch(`${API_URL}/auth/admin/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

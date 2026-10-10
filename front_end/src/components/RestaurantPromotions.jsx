@@ -1,3 +1,4 @@
+import { API_URL } from "../config";
 import { useEffect, useState } from "react";
 import "../styles/RestaurantPromotions.css";
 
@@ -9,7 +10,7 @@ export default function RestaurantPromotions({ restaurantId }) {
     async function fetchPromos() {
       try {
         const res = await fetch(
-          `http://localhost:4000/promotions/restaurant/${restaurantId}`
+          `${API_URL}/promotions/restaurant/${restaurantId}`
         );
         const data = await res.json();
         setPromos(data);

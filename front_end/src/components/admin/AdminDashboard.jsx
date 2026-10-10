@@ -1,3 +1,4 @@
+import { API_URL } from "../../config";
 import React, {useState, useEffect} from "react";
 
 
@@ -11,7 +12,7 @@ function AdminDashboard() {
   useEffect(() => {
     async function fetchUserAmount() {
       try {
-        const res = await fetch("http://localhost:4000/auth/admin/userAmount");
+        const res = await fetch(`${API_URL}/auth/admin/userAmount`);
         const data = await res.json();
         setUserLength(data);
       } catch (error) {
@@ -28,7 +29,7 @@ function AdminDashboard() {
   useEffect(() =>{
     async function fetchRestaurantAmount() {
       try{
-        const res = await fetch("http://localhost:4000/auth/admin/restaurantAmount");
+        const res = await fetch(`${API_URL}/auth/admin/restaurantAmount`);
         const data = await res.json();
         setRestaurantLength(data);
       }catch(error){
@@ -45,7 +46,7 @@ function AdminDashboard() {
   useEffect(()=>{
     async function fetchOrderAmount() {
       try{
-        const res = await fetch("http://localhost:4000/auth/admin/orderAmount");
+        const res = await fetch(`${API_URL}/auth/admin/orderAmount`);
         const data = await res.json();
         setOrderLength(data);
       }catch(error){

@@ -1,3 +1,4 @@
+import { API_URL } from "../../config";
 import React, { useState, useEffect } from "react";
 import RestaurantForm from "./RestaurantForm";
 import MenuManager from "./MenuManager";
@@ -21,7 +22,7 @@ function AdminRestaurants() {
 
   const fetchRestaurants = async () => {
     try {
-      const result = await fetch("http://localhost:4000/restaurants");
+      const result = await fetch(`${API_URL}/restaurants`);
       const data = await result.json();
       setRestaurants(data);
     } catch (error) {
@@ -31,7 +32,7 @@ function AdminRestaurants() {
 
   const fetchTags = async () => {
     try {
-      const result = await fetch("http://localhost:4000/tags");
+      const result = await fetch(`${API_URL}/tags`);
       const data = await result.json();
       setTags(data);
     } catch (error) {
@@ -45,7 +46,7 @@ function AdminRestaurants() {
     if (!confirmDelete) return;
 
     try {
-      const res = await fetch(`http://localhost:4000/restaurants/${id}`, {
+      const res = await fetch(`${API_URL}/restaurants/${id}`, {
         method: "DELETE",
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("adminToken")}`
@@ -88,7 +89,7 @@ function AdminRestaurants() {
     }
 
     try {
-      const res = await fetch("http://localhost:4000/tags/new-tags", {
+      const res = await fetch(`${API_URL}/tags/new-tags`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -122,7 +123,7 @@ function AdminRestaurants() {
     }
 
     try {
-      const res = await fetch(`http://localhost:4000/tags/${editingTag.tag_id}`, {
+      const res = await fetch(`${API_URL}/tags/${editingTag.tag_id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -162,7 +163,7 @@ function AdminRestaurants() {
     }
 
     try {
-      const res = await fetch(`http://localhost:4000/tags/${id}`, {
+      const res = await fetch(`${API_URL}/tags/${id}`, {
         method: "DELETE",
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("adminToken")}`

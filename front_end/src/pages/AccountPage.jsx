@@ -1,3 +1,4 @@
+import { API_URL } from "../config";
 import { useState, useEffect } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -31,7 +32,7 @@ export default function AccountPage() {
   useEffect(() => {
     async function loadUser() {
       try {
-        const res = await fetch("http://localhost:4000/auth/user", {
+        const res = await fetch(`${API_URL}/auth/user`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -61,7 +62,7 @@ export default function AccountPage() {
     async function loadOrders() {
       try {
         const res = await fetch(
-          `http://localhost:4000/orders/user/${user.user_id}`,
+          `${API_URL}/orders/user/${user.user_id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -84,7 +85,7 @@ export default function AccountPage() {
   //update user info
   const handleUpdateUser = async () => {
     try {
-      const res = await fetch("http://localhost:4000/auth/update", {
+      const res = await fetch(`${API_URL}/auth/update`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -125,7 +126,7 @@ export default function AccountPage() {
     }
 
     try {
-      const res = await fetch("http://localhost:4000/auth/update-password", {
+      const res = await fetch(`${API_URL}/auth/update-password`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

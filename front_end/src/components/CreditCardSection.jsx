@@ -1,8 +1,9 @@
+import { API_URL } from "../config";
 
 import { useState, useEffect } from "react";
 import "../styles/CreditCardSection.css";
 
-const API_URL = "http://localhost:4000/credit-cards";
+const CREDIT_CARDS_URL = `${API_URL}/credit-cards`;
 
 const emptyForm = {
   card_nickname: "",
@@ -40,7 +41,7 @@ export default function CreditCardSection({ token }) {
       setLoading(true);
 
       try {
-        const res = await fetch(API_URL, {
+        const res = await fetch(CREDIT_CARDS_URL, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -72,7 +73,7 @@ export default function CreditCardSection({ token }) {
 
   const loadCreditCards = async () => {
     try {
-      const res = await fetch(API_URL, {
+      const res = await fetch(CREDIT_CARDS_URL, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -170,8 +171,8 @@ export default function CreditCardSection({ token }) {
     try {
       const res = await fetch(
         editingCard
-          ? `${API_URL}/${editingCard.card_id}`
-          : API_URL,
+          ? `${CREDIT_CARDS_URL}/${editingCard.card_id}`
+          : CREDIT_CARDS_URL,
         {
           method: editingCard ? "PUT" : "POST",
           headers: {
@@ -203,7 +204,7 @@ export default function CreditCardSection({ token }) {
     if (!window.confirm("Delete this demo card?")) return;
 
     try {
-      const res = await fetch(`${API_URL}/${cardId}`, {
+      const res = await fetch(`${CREDIT_CARDS_URL}/${cardId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`
@@ -221,7 +222,7 @@ export default function CreditCardSection({ token }) {
 
   const handleSetDefault = async (cardId) => {
     try {
-      const res = await fetch(`${API_URL}/${cardId}/default`, {
+      const res = await fetch(`${CREDIT_CARDS_URL}/${cardId}/default`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`
@@ -261,7 +262,7 @@ export default function CreditCardSection({ token }) {
 
     try {
       for (const card of demoCards) {
-        const res = await fetch(API_URL, {
+        const res = await fetch(CREDIT_CARDS_URL, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

@@ -1,3 +1,4 @@
+import { API_URL } from "../../config";
 import React, { useState, useEffect } from "react";
 import "../../styles/RestaurantForm.css";
 
@@ -29,7 +30,7 @@ function RestaurantForm({ closeForm, setRestaurants, restaurant }) {
 
   const fetchRestaurantTags = async () => {
     try {
-      const response = await fetch("http://localhost:4000/tags/restaurant-tags");
+      const response = await fetch(`${API_URL}/tags/restaurant-tags`);
       const data = await response.json();
       setRestaurantTags(data);
     } catch (error) {
@@ -54,8 +55,8 @@ function RestaurantForm({ closeForm, setRestaurants, restaurant }) {
 
     const method = isEdit ? "PUT" : "POST";
     const url = isEdit
-      ? `http://localhost:4000/restaurants/${restaurant.restaurant_id}`
-      : "http://localhost:4000/restaurants";
+      ? `${API_URL}/restaurants/${restaurant.restaurant_id}`
+      : `${API_URL}/restaurants`;
 
     const payload = {
       ...form,
