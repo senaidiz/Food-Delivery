@@ -4,7 +4,7 @@ import logoImg1 from "../assets/logo-1.png";
 import logoImg2 from "../assets/logo-2.png";
 
 
-import "../styles/Landing.css";
+import "../styles/landing.css";
 
 function LandingPage() {
   return (
