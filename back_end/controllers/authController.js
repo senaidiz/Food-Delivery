@@ -9,7 +9,7 @@ const SALT_ROUNDS = 15; //password hashing salt rounds
 
 //registering function
 export const register = async (req, res) => {
-    const { full_name, email, password, role, address } = req.body;
+    const { full_name, email, password, address } = req.body;
     if (!full_name || !email || !password) return res.status(400).json({ error: "Missing fields" });
 
     try {
@@ -18,7 +18,7 @@ export const register = async (req, res) => {
             INSERT INTO users (full_name, email, password_hash, role, address) 
             VALUES ($1, $2, $3, $4, $5) 
             RETURNING user_id, full_name, email, role, address
-        `, [full_name, email, hash, role || "customer", address || null]);
+        `, [full_name, email, hash, "customer", address || null]);
 
         const user = result.rows[0];
         //token for registering
