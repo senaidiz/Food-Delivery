@@ -185,3 +185,8 @@ CREATE TABLE credit_cards (
     is_default BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT NOW()
 );
+
+
+CREATE UNIQUE INDEX unique_default_card_per_user
+ON credit_cards (user_id)
+WHERE is_default = TRUE;
