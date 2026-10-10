@@ -1,131 +1,95 @@
+
 import { useState } from "react";
 import "../styles/PaymentProcessor.css";
 
-export default function PaymentProcessor({ 
-  amount, 
-  selectedCard, 
-  onSuccess, 
+export default function PaymentProcessor({
+  amount,
+  selectedCard,
+  onSuccess,
   onCancel
 }) {
   const [processing, setProcessing] = useState(false);
-  const [currentStep, setCurrentStep] = useState(0);
-  const [simulationComplete, setSimulationComplete] = useState(false);
+  const [error, setError] = useState("");
 
-  const steps = [
-    { title: "Validating card", description: "Checking card details..." },
-    { title: "Connecting to bank", description: "Establishing secure connection..." },
-    { title: "Processing payment", description: "Authorizing transaction..." },
-    { title: "Verifying funds", description: "Confirming available balance..." },
-    { title: "Completing transaction", description: "Finalizing payment..." }
-  ];
+  const handleDemoOrder = async () => {
+    if (processing) return;
 
-  const simulatePayment = async () => {
     setProcessing(true);
-    
-    //each step with delay
-    for (let i = 0; i < steps.length; i++) {
-      setCurrentStep(i);
-      await new Promise(resolve => setTimeout(resolve, 1500)); // 1.5 seconds per step
-    }
-    
-    //success
-    setSimulationComplete(true);
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    //call success callback
-    if (onSuccess) {
-      onSuccess();
-    }
-  };
+    setError("");
 
-  const formatCardNumber = (number) => {
-    if (!number) return "•••• •••• •••• ••••";
-    const lastFour = number.slice(-4);
-    return `•••• •••• •••• ${lastFour}`;
+    try {
+      await onSuccess();
+    } catch (err) {
+      setError(err.message || "Failed to create demo order");
+    } finally {
+      setProcessing(false);
+    }
   };
 
   return (
     <div className="payment-processor">
       <div className="payment-header">
-        <h3>Complete Payment</h3>
+        <h3>Demo Checkout</h3>
+      </div>
+
+      <div className="demo-notice">
+        This is a demonstration. No real payment will be
+        processed or charged.
       </div>
 
       <div className="payment-summary">
         <div className="summary-item">
-          <span>Amount to Pay:</span>
-          <span className="amount">${amount.toFixed(2)}</span>
+          <span>Order Total:</span>
+          <span className="amount">
+            ${amount.toFixed(2)}
+          </span>
         </div>
+
         <div className="summary-item">
-          <span>Payment Method:</span>
-          <span>{selectedCard?.card_nickname || "Credit Card"}</span>
+          <span>Demo Payment Method:</span>
+          <span>
+            {selectedCard?.card_nickname ||
+              "No demo card selected"}
+          </span>
         </div>
-        <div className="summary-item">
-          <span>Card Number:</span>
-          <span>{formatCardNumber(selectedCard?.card_number)}</span>
-        </div>
+
+        {selectedCard && (
+          <div className="summary-item">
+            <span>Demo Card:</span>
+            <span>
+              •••• {selectedCard.last_four}
+            </span>
+          </div>
+        )}
       </div>
 
-      {!processing && !simulationComplete && (
-        <div className="payment-actions">
-          <button className="pay-button" onClick={simulatePayment}>
-            <i className="fa-solid fa-lock"></i>
-            Pay ${amount.toFixed(2)}
-          </button>
-          <button className="cancel-button" onClick={onCancel}>
-            Cancel
-          </button>
+      {error && (
+        <div className="error-message">
+          {error}
         </div>
       )}
 
-      {processing && (
-        <div className="payment-progress">
-          <h4>Processing Payment...</h4>
-          
-          <div className="progress-steps">
-            {steps.map((step, index) => (
-              <div 
-                key={index} 
-                className={`step ${index === currentStep ? 'active' : ''} ${index < currentStep ? 'completed' : ''}`}
-              >
-                <div className="step-number">
-                  {index < currentStep ? (
-                    <i className="fa-solid fa-check"></i>
-                  ) : (
-                    index + 1
-                  )}
-                </div>
-                <div className="step-content">
-                  <div className="step-title">{step.title}</div>
-                  <div className="step-description">{step.description}</div>
-                </div>
-              </div>
-            ))}
-          </div>
+      <div className="payment-actions">
+        <button
+          type="button"
+          className="pay-button"
+          onClick={handleDemoOrder}
+          disabled={processing}
+        >
+          {processing
+            ? "Creating Demo Order..."
+            : "Place Demo Order"}
+        </button>
 
-          <div className="processing-animation">
-            <div className="spinner"></div>
-            <p>Please wait while we process your payment...</p>
-          </div>
-        </div>
-      )}
-
-      {simulationComplete && (
-        <div className="payment-success">
-          <div className="success-icon">
-            <i className="fa-solid fa-check-circle"></i>
-          </div>
-          <h4>Payment Successful!</h4>
-          <p>Your payment of ${amount.toFixed(2)} has been processed successfully.</p>
-          <div className="transaction-details">
-            <p><strong>Transaction ID:</strong> DEMO-{Date.now().toString(36).toUpperCase()}</p>
-            <p><strong>Date:</strong> {new Date().toLocaleString()}</p>
-            <p><strong>Status:</strong> <span className="status-completed">Completed</span></p>
-          </div>
-          <button className="continue-button" onClick={onSuccess}>
-            Continue
-          </button>
-        </div>
-      )}
+        <button
+          type="button"
+          className="cancel-button"
+          onClick={onCancel}
+          disabled={processing}
+        >
+          Cancel
+        </button>
+      </div>
     </div>
   );
 }

@@ -285,46 +285,47 @@ export default function CartSidebar({ isOpen, onClose }) {
   const handlePaymentSuccess = async () => {
     const token = localStorage.getItem("token");
 
-    try {
-      const orderData = {
-        promo_code: appliedPromotion?.code || null
-      };
+    if (!token) {
+      throw new Error("Please log in to place a demo order.");
+    }
 
-      const res = await fetch("http://localhost:4000/orders/from-cart", {
+    const orderData = {
+      promo_code: appliedPromotion?.code || null
+    };
+
+    const res = await fetch(
+      "http://localhost:4000/orders/from-cart",
+      {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`
         },
         body: JSON.stringify(orderData)
-      });
-
-      const data = await res.json();
-
-      if (data.error) {
-        alert("Failed to place order: " + data.error);
-        return;
       }
+    );
 
-      setShowPaymentModal(false);
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
 
-      if (data.orders && data.orders.length > 1) {
-        alert(`Payment successful! Created ${data.orders.length} separate orders for different restaurants.`);
-      } else {
-        alert("Payment successful! Order placed successfully!");
-      }
-
-      onClose();
-      setCartItems([]);
-      setAppliedPromotion(null);
-      setPromoCode("");
-      setRestaurantId(null);
-      window.location.reload();
-    } catch (err) {
-      console.error("Failed to place order:", err);
-      alert("Payment successful but order creation failed. Please contact support.");
+      throw new Error(
+        errorData.error || "Failed to create demo order"
+      );
     }
+
+    setShowPaymentModal(false);
+
+    alert("Demo order placed successfully! No payment was charged.");
+
+    onClose();
+    setCartItems([]);
+    setAppliedPromotion(null);
+    setPromoCode("");
+    setRestaurantId(null);
+
+    window.location.reload();
   };
+
 
   function goToAccountPage() {
     onClose(); //close cart sidebar

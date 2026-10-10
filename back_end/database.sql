@@ -28,13 +28,6 @@ CREATE TABLE restaurants (
     restaurant_img TEXT
 );
 
---Restaurant tags
-CREATE TABLE restaurant_tags (
-    restaurant_tag_id SERIAL PRIMARY KEY,
-    restaurant_id INT REFERENCES restaurants(restaurant_id) ON DELETE CASCADE,
-    tag_id INT REFERENCES tags(tag_id) ON DELETE CASCADE
-);
-
 -- -------------------------
 -- MENU STRUCTURE
 -- -------------------------
@@ -69,6 +62,13 @@ CREATE TABLE tags (
     tag_id SERIAL PRIMARY KEY,
     name VARCHAR(100) UNIQUE NOT NULL, --pizza, burger, asian cuisine, dessert, doner, sushi, vegan
     img_url TEXT
+);
+
+--Restaurant tags
+CREATE TABLE restaurant_tags (
+    restaurant_tag_id SERIAL PRIMARY KEY,
+    restaurant_id INT REFERENCES restaurants(restaurant_id) ON DELETE CASCADE,
+    tag_id INT REFERENCES tags(tag_id) ON DELETE CASCADE
 );
 
 -- Multiple Tags for items
@@ -177,11 +177,11 @@ CREATE TABLE credit_cards (
     card_id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
     card_nickname VARCHAR(50),
-    card_number VARCHAR(16) NOT NULL,
-    card_holder VARCHAR(100) NOT NULL,
-    expiry_month INT NOT NULL CHECK (expiry_month BETWEEN 1 AND 12),
-    expiry_year INT NOT NULL,
-    cvv VARCHAR(4) NOT NULL,
+    card_brand VARCHAR(30),
+    last_four VARCHAR(4),
+    payment_method_token TEXT,
+    expiry_month INT CHECK (expiry_month BETWEEN 1 AND 12),
+    expiry_year INT,
     is_default BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT NOW()
 );

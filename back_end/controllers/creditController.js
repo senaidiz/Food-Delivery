@@ -2,169 +2,240 @@ import {db} from "../db.js";
 
 //get all of the credit cards
 export const getAllCredits = async (req, res) => {
-  const { userId } = req.params;
-  
+  const userId = req.user.user_id;
+
   try {
     const result = await db.query(
-      `SELECT * FROM credit_cards 
-       WHERE user_id = $1 
+      `SELECT
+         card_id,
+         card_nickname,
+         card_brand,
+         last_four,
+         expiry_month,
+         expiry_year,
+         is_default,
+         created_at
+       FROM credit_cards
+       WHERE user_id = $1
        ORDER BY is_default DESC, created_at DESC`,
       [userId]
     );
-    
+
     res.json(result.rows);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to get credit cards" });
   }
-}
+};
+
 
 //add new credit card, demo so not complex
 export const addCreditCard = async (req, res) => {
-  const { user_id, card_nickname, card_number, card_holder, expiry_month, expiry_year, cvv, is_default } = req.body;
-  
+  const userId = req.user.user_id;
+
+  const {
+    card_nickname,
+    card_brand,
+    last_four,
+    expiry_month,
+    expiry_year,
+    is_default
+  } = req.body;
+
+  const validBrands = ["visa", "mastercard", "amex"];
+
+  if (
+    typeof card_brand !== "string" ||
+    !validBrands.includes(card_brand.toLowerCase()) ||
+    typeof last_four !== "string" ||
+    !/^\d{4}$/.test(last_four) ||
+    !Number.isInteger(expiry_month) ||
+    expiry_month < 1 ||
+    expiry_month > 12 ||
+    !Number.isInteger(expiry_year) ||
+    expiry_year < new Date().getFullYear() ||
+    (card_nickname != null && typeof card_nickname !== "string") ||
+    (is_default != null && typeof is_default !== "boolean")
+  ) {
+    return res.status(400).json({
+      error: "Invalid demo card details"
+    });
+  }
+
   try {
-    //make sure cart has 8 digits at least
-    const cleanedCardNumber = card_number.replace(/\D/g, '');
-    if (cleanedCardNumber.length < 8) {
-      return res.status(400).json({ error: "Card number must be at least 8 digits for demo" });
-    }
-
-    //ignore expiry date in future
-    const currentYear = new Date().getFullYear();
-    if (expiry_year < currentYear - 1) {
-      return res.status(400).json({ error: "Card expiry seems too old" });
-    }
-
-    //when adding as default if another is default change that
-    if (is_default) {
-      await db.query(
-        `UPDATE credit_cards SET is_default = FALSE WHERE user_id = $1`,
-        [user_id]
-      );
-    }
-    
     const result = await db.query(
-      `INSERT INTO credit_cards 
-       (user_id, card_nickname, card_number, card_holder, expiry_month, expiry_year, cvv, is_default)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-       RETURNING *`,
-      [user_id, card_nickname || null, cleanedCardNumber, card_holder, 
-       expiry_month, expiry_year, cvv, is_default || false]
+      `INSERT INTO credit_cards
+       (user_id, card_nickname, card_brand, last_four,
+        expiry_month, expiry_year, is_default)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
+       RETURNING card_id, card_nickname, card_brand,
+                 last_four, expiry_month, expiry_year, is_default`,
+      [
+        userId,
+        card_nickname || null,
+        card_brand.toLowerCase(),
+        last_four,
+        expiry_month,
+        expiry_year,
+        false
+      ]
     );
-    
-    res.json(result.rows[0]);
+
+    res.status(201).json(result.rows[0]);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Failed to add credit card" });
+    res.status(500).json({
+      error: "Failed to add demo card"
+    });
   }
-}
+};
+
 
 //update existing credit card
 export const updateCard = async (req, res) => {
+  const userId = req.user.user_id;
   const { cardId } = req.params;
-  const { card_nickname, card_holder, expiry_month, expiry_year, is_default, user_id } = req.body;
-  
+  const { card_nickname, expiry_month, expiry_year } = req.body;
+
+  if (
+    (card_nickname != null && typeof card_nickname !== "string") ||
+    !Number.isInteger(expiry_month) ||
+    expiry_month < 1 ||
+    expiry_month > 12 ||
+    !Number.isInteger(expiry_year) ||
+    expiry_year < new Date().getFullYear()
+  ) {
+    return res.status(400).json({
+      error: "Invalid card details"
+    });
+  }
+
   try {
-    //when adding as default if another is default change that
-    if (is_default) {
-      await db.query(
-        `UPDATE credit_cards SET is_default = FALSE WHERE user_id = $1 AND card_id != $2`,
-        [user_id, cardId]
-      );
-    }
-    
     const result = await db.query(
-      `UPDATE credit_cards 
-       SET card_nickname = $1, 
-           card_holder = $2, 
-           expiry_month = $3, 
-           expiry_year = $4, 
-           is_default = $5,
-           created_at = created_at
-       WHERE card_id = $6
-       RETURNING *`,
-      [card_nickname || null, card_holder, expiry_month, expiry_year, is_default, cardId]
+      `UPDATE credit_cards
+       SET card_nickname = $1,
+           expiry_month = $2,
+           expiry_year = $3
+       WHERE card_id = $4 AND user_id = $5
+       RETURNING card_id, card_nickname, card_brand,
+                 last_four, expiry_month, expiry_year, is_default`,
+      [
+        card_nickname || null,
+        expiry_month,
+        expiry_year,
+        cardId,
+        userId
+      ]
     );
-    
+
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: "Credit card not found" });
+      return res.status(404).json({
+        error: "Card not found"
+      });
     }
-    
+
     res.json(result.rows[0]);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Failed to update credit card" });
+    res.status(500).json({
+      error: "Failed to update card"
+    });
   }
-}
+};
+
 
 //delete existing credit cards
 export const deleteCard = async (req, res) => {
+  const userId = req.user.user_id;
   const { cardId } = req.params;
-  
+
   try {
     const result = await db.query(
-      `DELETE FROM credit_cards WHERE card_id = $1 RETURNING *`,
-      [cardId]
+      `DELETE FROM credit_cards
+       WHERE card_id = $1 AND user_id = $2
+       RETURNING card_id`,
+      [cardId, userId]
     );
-    
+
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: "Credit card not found" });
+      return res.status(404).json({
+        error: "Card not found"
+      });
     }
-    
-    // If deleted card was default, set another as default
-    if (result.rows[0].is_default) {
-      const newDefault = await db.query(
-        `SELECT card_id FROM credit_cards 
-         WHERE user_id = $1 
-         ORDER BY created_at DESC 
-         LIMIT 1`,
-        [result.rows[0].user_id]
-      );
-      
-      if (newDefault.rows.length > 0) {
-        await db.query(
-          `UPDATE credit_cards SET is_default = TRUE WHERE card_id = $1`,
-          [newDefault.rows[0].card_id]
-        );
-      }
-    }
-    
-    res.json({ success: true });
+
+    res.json({
+      message: "Card deleted successfully"
+    });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Failed to delete credit card" });
+    res.status(500).json({
+      error: "Failed to delete card"
+    });
   }
-}
+};
+
 
 //set a card as default
-export const setDefault= async (req, res) => {
+
+export const setDefault = async (req, res) => {
+  const userId = req.user.user_id;
   const { cardId } = req.params;
-  const { user_id } = req.body;
-  
+
+  const client = await db.connect();
+
   try {
-    //unset all other defaults
-    await db.query(
-      `UPDATE credit_cards SET is_default = FALSE WHERE user_id = $1`,
-      [user_id]
+    await client.query("BEGIN");
+
+    // Aynı kullanıcının eşzamanlı varsayılan kart
+    // değişikliklerini sıraya al.
+    await client.query(
+      "SELECT user_id FROM users WHERE user_id = $1 FOR UPDATE",
+      [userId]
     );
-    
-    //set this card as default
-    const result = await db.query(
-      `UPDATE credit_cards 
-       SET is_default = TRUE 
-       WHERE card_id = $1 AND user_id = $2
-       RETURNING *`,
-      [cardId, user_id]
+
+    // Seçilen kart gerçekten bu kullanıcıya mı ait?
+    const card = await client.query(
+      `SELECT card_id
+       FROM credit_cards
+       WHERE card_id = $1 AND user_id = $2`,
+      [cardId, userId]
     );
-    
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: "Credit card not found" });
+
+    if (card.rows.length === 0) {
+      await client.query("ROLLBACK");
+      return res.status(404).json({
+        error: "Card not found"
+      });
     }
-    
+
+    // Önce diğer kartların varsayılan durumunu kaldır.
+    await client.query(
+      `UPDATE credit_cards
+       SET is_default = FALSE
+       WHERE user_id = $1`,
+      [userId]
+    );
+
+    // Seçilen kartı varsayılan yap.
+    const result = await client.query(
+      `UPDATE credit_cards
+       SET is_default = TRUE
+       WHERE card_id = $1 AND user_id = $2
+       RETURNING card_id, card_nickname, card_brand,
+                 last_four, expiry_month, expiry_year, is_default`,
+      [cardId, userId]
+    );
+
+    await client.query("COMMIT");
+
     res.json(result.rows[0]);
   } catch (err) {
+    await client.query("ROLLBACK");
     console.error(err);
-    res.status(500).json({ error: "Failed to set default card" });
+    res.status(500).json({
+      error: "Failed to set default card"
+    });
+  } finally {
+    client.release();
   }
-}
+};
