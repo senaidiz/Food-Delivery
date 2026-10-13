@@ -13,6 +13,29 @@ A full-stack food delivery web application built with React, Express.js, and Pos
 
 <img width="1897" height="854" alt="Image" src="https://github.com/user-attachments/assets/133ada8e-2f57-4124-9e1d-fdef6f8090be" />
 
+
+## Key Features
+
+### Customer
+- User registration and authentication
+- Browse available restaurants
+- Explore restaurant categories
+
+### Admin
+- Secure admin authentication
+- Create and manage restaurant listings
+- Role-based access control
+
+### Technical Highlights
+- React frontend with an Express.js REST API
+- PostgreSQL database
+- Password hashing with bcrypt and JWT-based authentication
+- Cloud deployment using Vercel, Render, and Neon
+
+
+
+
+
 ## To Run the Project:
 ### Installing Needed Modules
 Open the project in a terminal and run the following code to install needed node_modules.
