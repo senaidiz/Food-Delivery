@@ -1,8 +1,15 @@
 # Food Delivery Website
-This is a Food Delivery website project using React as the main JavaScript library, Node.js with Express.js as the framework and with PostgreSQL for database connection.
 
-⚠️ This project is for learning and demonstration only.
-⚠️ The database schema and .env examples are NOT for production use.
+
+### Live Demo
+
+[View Live Application](https://food-delivery-one-cyan.vercel.app)
+
+A full-stack food delivery web application built with React, Express.js, and PostgreSQL.
+
+**Deployment:** Vercel (Frontend) · Render (Backend) · Neon (Database)
+
+> This project is intended for learning and portfolio demonstration purposes.
 
 <img width="1897" height="854" alt="Image" src="https://github.com/user-attachments/assets/133ada8e-2f57-4124-9e1d-fdef6f8090be" />
 
